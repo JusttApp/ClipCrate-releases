@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ClipCrate — The developer's smart clipboard for Windows</title>
+<meta name="description" content="A privacy-aware, programmable clipboard for Windows developers. Detects secrets and blurs them, formats your paste for the app you're in, and runs your own JS actions. Local-first. One-time $29." />
+<link rel="icon" href="app-icon.svg" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0b0b0f;
+    --panel: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.10);
+    --text: #f4f4f5;
+    --muted: #a1a1aa;
+    --blue: #4f8cff;
+    --purple: #8b5cf6;
+    --grad: linear-gradient(135deg, #4f8cff, #8b5cf6);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  .glow {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(600px circle at 20% 0%, rgba(79,140,255,0.18), transparent 60%),
+      radial-gradient(600px circle at 85% 10%, rgba(139,92,246,0.16), transparent 55%);
+  }
+  .wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; text-decoration: none; }
+
+  /* nav */
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+  .brand img { width: 30px; height: 30px; }
+  .nav-links { display: flex; gap: 26px; color: var(--muted); font-size: 14px; font-weight: 500; }
+  .nav-links a:hover { color: var(--text); }
+
+  /* hero */
+  .hero { text-align: center; padding: 70px 0 50px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--panel);
+    font-size: 13px; color: var(--muted); margin-bottom: 28px;
+  }
+  .pill b { color: var(--text); font-weight: 600; }
+  h1 { font-size: 56px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; }
+  h1 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sub { font-size: 19px; color: var(--muted); max-width: 620px; margin: 22px auto 0; }
+  .cta { display: flex; gap: 14px; justify-content: center; margin-top: 36px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 14px 26px; border-radius: 12px; font-weight: 600; font-size: 15px;
+    border: 1px solid var(--border); transition: transform .15s ease, background .15s ease;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background: var(--grad); border: none; color: #fff; box-shadow: 0 10px 30px rgba(79,140,255,0.35); }
+  .btn-ghost { background: var(--panel); color: var(--text); }
+  .note { margin-top: 14px; font-size: 13px; color: var(--muted); }
+
+  /* demo slots */
+  .demos { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 60px 0; }
+  .demo {
+    border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+    background: var(--panel);
+  }
+  .demo-media {
+    aspect-ratio: 16 / 10; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(79,140,255,0.10), rgba(139,92,246,0.10));
+    color: var(--muted); font-size: 14px; text-align: center; padding: 20px;
+  }
+  .demo-cap { padding: 16px 20px; }
+  .demo-cap h3 { font-size: 16px; font-weight: 600; }
+  .demo-cap p { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+  /* features */
+  .section-title { text-align: center; font-size: 34px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
+  .section-sub { text-align: center; color: var(--muted); margin-bottom: 44px; }
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 0 0 90px; }
+  .card { border: 1px solid var(--border); background: var(--panel); border-radius: 16px; padding: 24px; }
+  .card .ic { width: 42px; height: 42px; border-radius: 11px; background: var(--grad); display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 14px; }
+  .card h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+  .card p { font-size: 14px; color: var(--muted); }
+
+  /* pricing */
+  .pricing { max-width: 760px; margin: 0 auto 90px; }
+  .tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 40px; }
+  .tier { border: 1px solid var(--border); border-radius: 18px; padding: 30px; background: var(--panel); }
+  .tier.pro { border-color: rgba(79,140,255,0.5); background: linear-gradient(135deg, rgba(79,140,255,0.10), rgba(139,92,246,0.10)); }
+  .tier h3 { font-size: 18px; font-weight: 700; }
+  .price { font-size: 40px; font-weight: 800; margin: 10px 0 2px; }
+  .price small { font-size: 15px; color: var(--muted); font-weight: 500; }
+  .tier ul { list-style: none; margin: 20px 0; display: flex; flex-direction: column; gap: 10px; }
+  .tier li { font-size: 14px; color: var(--muted); display: flex; gap: 10px; }
+  .tier li b { color: var(--text); font-weight: 600; }
+  .check { color: #4ade80; }
+
+  footer { border-top: 1px solid var(--border); padding: 36px 0; text-align: center; color: var(--muted); font-size: 13px; }
+
+  @media (max-width: 760px) {
+    h1 { font-size: 38px; }
+    .demos, .features, .tiers { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+
+<div class="wrap">
+  <nav>
+    <div class="brand"><img src="app-icon.svg" alt="ClipCrate" /> ClipCrate</div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://github.com/JusttApp/ClipCrate-releases/releases/latest">Download</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="pill">🔒 <b>Privacy-aware</b> · local-first · Windows</div>
+    <h1>Copy once.<br/>Paste it <span class="grad">smart</span>, anywhere.</h1>
+    <p class="sub">
+      ClipCrate is the developer's clipboard for Windows. It detects the secrets you copy and
+      blurs them, formats your paste for the app you're in, and runs your own JavaScript actions —
+      all on your machine.
+    </p>
+    <div class="cta">
+      <a class="btn btn-primary" href="https://github.com/JusttApp/ClipCrate-releases/releases/latest">⬇ Download free</a>
+      <a class="btn btn-ghost" href="#pricing">See Pro — $29 lifetime</a>
+    </div>
+    <p class="note">Free forever for 100 clips · No account · No telemetry · ~3 MB</p>
+  </header>
+
+  <!-- The two hero demos. Drop the recorded GIFs into landing/ as smart-paste.gif and privacy-shield.gif. -->
+  <section class="demos">
+    <div class="demo">
+      <div class="demo-media" id="demo-smartpaste">▶ Smart Paste demo<br/><small>(smart-paste.gif)</small></div>
+      <div class="demo-cap"><h3>Smart Paste</h3><p>Copy JSON, hit Alt+V over Slack, press Tab — it pastes as a clean code block. It knows where you're pasting.</p></div>
+    </div>
+    <div class="demo">
+      <div class="demo-media" id="demo-privacy">🔒 Privacy Shield demo<br/><small>(privacy-shield.gif)</small></div>
+      <div class="demo-cap"><h3>Privacy Shield</h3><p>Copy an API key and ClipCrate detects it and blurs it in your history — until you hover. Secrets don't sit on screen.</p></div>
+    </div>
+  </section>
+
+  <section id="features">
+    <h2 class="section-title">Built for people who copy code all day</h2>
+    <p class="section-sub">Not a history list — a programmable, privacy-aware paste engine.</p>
+    <div class="features">
+      <div class="card"><div class="ic">🔍</div><h3>Instant search</h3><p>Alt+V opens a Spotlight-style overlay. Fuzzy search, arrow keys, Enter to paste where you were.</p></div>
+      <div class="card"><div class="ic">🏷️</div><h3>Knows your content</h3><p>JSON, URLs, code, SQL, emails and colors are auto-detected and badged.</p></div>
+      <div class="card"><div class="ic">🔒</div><h3>Privacy Shield</h3><p>AWS keys, tokens, JWTs, .env files and card numbers are detected and blurred automatically.</p></div>
+      <div class="card"><div class="ic">✨</div><h3>Smart Actions</h3><p>Format JSON, strip URL tracking, decode JWTs, extract emails, Base64 — right from the list.</p></div>
+      <div class="card"><div class="ic">⚡</div><h3>Custom JS actions</h3><p>Write your own <code>transform(input)</code> in a sandbox. Make ClipCrate yours. (Pro)</p></div>
+      <div class="card"><div class="ic">🖥️</div><h3>Local-first</h3><p>Everything lives in SQLite on your machine. No account, no cloud, no telemetry.</p></div>
+    </div>
+  </section>
+
+  <section id="pricing" class="pricing">
+    <h2 class="section-title">Simple pricing</h2>
+    <p class="section-sub">One-time. No subscription. Developers hate rent.</p>
+    <div class="tiers">
+      <div class="tier">
+        <h3>Free</h3>
+        <div class="price">$0</div>
+        <ul>
+          <li><span class="check">✓</span> Last <b>100 clips</b></li>
+          <li><span class="check">✓</span> Search + content badges</li>
+          <li><span class="check">✓</span> Privacy Shield</li>
+          <li><span class="check">✓</span> 3 Smart Actions</li>
+        </ul>
+        <a class="btn btn-ghost" style="width:100%;justify-content:center" href="https://github.com/JusttApp/ClipCrate-releases/releases/latest">Download free</a>
+      </div>
+      <div class="tier pro">
+        <h3>Pro</h3>
+        <div class="price">$29 <small>/ lifetime</small></div>
+        <ul>
+          <li><span class="check">✓</span> <b>Unlimited</b> history</li>
+          <li><span class="check">✓</span> <b>All</b> Smart Actions</li>
+          <li><span class="check">✓</span> <b>Custom JS actions</b></li>
+          <li><span class="check">✓</span> Images, files & collections <small>(soon)</small></li>
+        </ul>
+        <!-- TODO(store): point this at the Dodo Payments checkout once the product exists. -->
+        <a class="btn btn-primary" style="width:100%;justify-content:center" href="#">Get Pro</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">© <span id="yr"></span> JusttApp · ClipCrate · Local-first and proud of it.</div>
+</footer>
+
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+</body>
+</html>
