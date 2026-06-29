@@ -67,7 +67,7 @@
   .note { margin-top: 14px; font-size: 13px; color: var(--muted); }
 
   /* demo slots */
-  .demos { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 60px 0; }
+  .demos { display: grid; grid-template-columns: 1fr; gap: 36px; margin: 60px 0; }
   .demo {
     border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
     background: var(--panel);
@@ -77,7 +77,7 @@
     background: linear-gradient(135deg, rgba(79,140,255,0.10), rgba(139,92,246,0.10));
     color: var(--muted); font-size: 14px; text-align: center; padding: 20px;
   }
-  video.demo-media { width: 100%; padding: 0; object-fit: cover; background: #000; display: block; }
+  video.demo-media { width: 100%; height: auto; aspect-ratio: auto; padding: 0; object-fit: contain; background: #000; display: block; }
   .demo-cap { padding: 16px 20px; }
   .demo-cap h3 { font-size: 16px; font-weight: 600; }
   .demo-cap p { font-size: 14px; color: var(--muted); margin-top: 4px; }
@@ -144,11 +144,11 @@
   <!-- The two hero demos. Drop the recorded GIFs into landing/ as smart-paste.gif and privacy-shield.gif. -->
   <section class="demos">
     <div class="demo">
-      <video class="demo-media" src="smart-paste.mp4" autoplay loop muted playsinline preload="metadata"></video>
+      <video class="demo-media" src="smart-paste.mp4" autoplay loop muted playsinline preload="auto"></video>
       <div class="demo-cap"><h3>Smart Paste</h3><p>Copy JSON, hit Alt+V over Slack, press Tab — it pastes as a clean code block. It knows where you're pasting.</p></div>
     </div>
     <div class="demo">
-      <video class="demo-media" src="privacy-shield.mp4" autoplay loop muted playsinline preload="metadata"></video>
+      <video class="demo-media" src="privacy-shield.mp4" autoplay loop muted playsinline preload="auto"></video>
       <div class="demo-cap"><h3>Privacy Shield</h3><p>Copy an API key and ClipCrate detects it and blurs it in your history — until you hover. Secrets don't sit on screen.</p></div>
     </div>
   </section>
@@ -202,6 +202,16 @@
   <div class="wrap">© <span id="yr"></span> JusttApp · ClipCrate · Local-first and proud of it.</div>
 </footer>
 
-<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  // Ensure the demo videos autoplay (muted) across browsers.
+  document.querySelectorAll('video').forEach((v) => {
+    v.muted = true;
+    v.setAttribute('muted', '');
+    const tryPlay = () => v.play().catch(() => {});
+    tryPlay();
+    v.addEventListener('canplay', tryPlay, { once: true });
+  });
+</script>
 </body>
 </html>
