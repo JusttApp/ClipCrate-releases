@@ -1,11 +1,11 @@
 {
-  "version": "0.2.0",
-  "notes": "Smart Paste, Privacy Shield, Smart Actions + Custom JS actions, pinned clips & collections, license activation, and auto-updates.",
-  "pub_date": "2026-06-26T18:00:00Z",
+  "version": "0.3.0",
+  "notes": "Images & files (Pro), run-at-startup + system tray, pause capturing, Privacy Shield auto-expiry, and fixes (tooltips, thumbnails, clickable Smart Paste).",
+  "pub_date": "2026-06-29T12:00:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUWk1JWkNLbm9ncWVBQ1VvRE9FR0JOTk9RMmFNa2JEU2pESkE2aThEWWxoVkl4QWFEbXFnT1VtdHFUUXJqV2dnaFg5NStXUFFzdWVySjl5cHFoYStYeS9kM05RUUVVRFFrPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgyNDg1OTkwCWZpbGU6Q2xpcENyYXRlXzAuMi4wX3g2NC1zZXR1cC5leGUKZE5ONk9sd0cyaVpsK1ZyU08vb0lxUDVQUkZBQkxqTnhWYks0ekZtd0lHYnNyZk4zSFBtNzJ1ZVVacUtneGMrQmVzTkd2dHVtbE5WWnNnWTB4SmpvQVE9PQo=",
-      "url": "https://github.com/JusttApp/ClipCrate-releases/releases/download/v0.2.0/ClipCrate_0.2.0_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUWk1JWkNLbm9ncVFwVk1WTDl2d2ExN0k2QUpUNnB4M2Y4b2xwMXY5dmR2WHVZbjRPeUVwUGprRllLRUdrbi92ckk0Tm9Gdk5IdHV6cnQ1RkVKTXZMdHRxbXVhdHhTS3dBPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzgyNzY1MTg5CWZpbGU6Q2xpcENyYXRlXzAuMy4wX3g2NC1zZXR1cC5leGUKamhmc1lCWE5uRWt1cEF0a295QVpKT00xMTJHSGZtVm5OWGVkU3VSZnpTNXNLNGdBMjJQY1l1RmtQUE0wcURxMUpQZ09iVE5aYjFyVkZUSksyd2lXQXc9PQo=",
+      "url": "https://github.com/JusttApp/ClipCrate-releases/releases/download/v0.3.0/ClipCrate_0.3.0_x64-setup.exe"
     }
   }
 }
